@@ -3,17 +3,24 @@ const express = require('express');
 const app = express();
 const port = 3000;
 
+// register view engine
+app.set('view engine', 'ejs');
+
 // listen for requests
 app.listen(port, () => {
     console.log('i\'m listening motherfucker');
 });
 
 app.get('/', (req, res) => {
-    res.sendFile( './views/index.html', { root: __dirname });
+    res.render('index');
 });
 
 app.get('/about', (req, res) => {
-    res.sendFile('./views/about.html', { root: __dirname});
+    res.render('about');
+})
+
+app.get('/blogs/create', (req, res) => {
+    res.render('create');
 })
 
 // redirects
@@ -28,5 +35,5 @@ app.get('/about-us', (req, res) => {
 // we must specify the response status
 // to say that is an http error
 app.use((req, res) => {
-    res.status(404).sendFile('./views/404.html', { root: __dirname });
+    res.status(404).render('404');
 })
