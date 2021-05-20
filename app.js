@@ -1,4 +1,5 @@
 const express = require('express');
+const morgan = require('morgan');
 // create an instance for express
 const app = express();
 const port = 3000;
@@ -11,6 +12,34 @@ app.listen(port, () => {
     console.log('i\'m listening motherfucker');
 });
 
+
+// added morgan logger as middleware
+app.use(morgan(function (tokens, req, res) {
+    return [
+      tokens.method(req, res),
+      tokens.url(req, res),
+      tokens.status(req, res),
+      tokens.res(req, res, 'content-length'), '-',
+      tokens['response-time'](req, res), 'ms'
+    ].join(' ')
+  }));
+
+// middleware to add folder for static files
+app.use(express.static('public')); 
+
+// called middleware
+// it executes due to position and if we don't
+// have a reponse before
+// as params we have req, res, next
+// next tells to we to go on with the
+// next functions prensents in the code
+// app.use((req,res,next) => {
+//     console.log(req.path);
+//     console.log(req.method);
+//     console.log(req.hostname);
+//     next();
+// });
+
 app.get('/', (req, res) => {
     const blogs = [
         {title: 'Yoshi finds eggs', snippet: 'Lorem ipsum dolor sit amet consectetur'},
@@ -19,6 +48,11 @@ app.get('/', (req, res) => {
     ];
     res.render('index', {title: 'Home', blogs: blogs});
 });
+
+// app.use((req,res,next) => {
+//     console.log('just another middleware');
+//     next();
+// });
 
 app.get('/about', (req, res) => {
     res.render('about', {title: 'About'});
