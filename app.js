@@ -1,16 +1,33 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const morgan = require('morgan');
+
 // create an instance for express
 const app = express();
 const port = 3000;
 
+// connect to mongodb
+const dbURI = 'mongodb+srv://davidepelo:pelosone75@cluster0.ijrdt.mongodb.net/node-tuts?retryWrites=true&w=majority';
+
+// mongoose connection
+mongoose.connect(dbURI, {useNewUrlParser: true, useUnifiedTopology: true})
+    .then((response) => {
+        console.log('connected to mongodb');
+        
+        // listen for requests only
+        // when connection to mongodb 
+        // is established
+        app.listen(port, () => {
+            console.log('i\'m listening motherfucker');
+        });
+    })
+    .catch((err) => {
+        console.log(err);
+    });
+
+
 // register view engine
 app.set('view engine', 'ejs');
-
-// listen for requests
-app.listen(port, () => {
-    console.log('i\'m listening motherfucker');
-});
 
 
 // added morgan logger as middleware
