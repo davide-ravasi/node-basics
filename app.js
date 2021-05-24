@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const morgan = require('morgan');
+const Blog = require('./models/blog');
 
 // create an instance for express
 const app = express();
@@ -82,6 +83,23 @@ app.get('/blogs/create', (req, res) => {
 // redirects
 app.get('/about-us', (req, res) => {
     res.redirect('/about', {title: '404'});
+})
+
+app.get('/add-blog', (req, res) => {
+    const blog = new Blog({
+        title: 'new blog',
+        snippet: 'prova snippet',
+        body: 'prova body'
+    });
+
+    blog.save()
+    .then((saveDoc) => {
+        console.log(saveDoc);
+        res.send(saveDoc);
+    })
+    .catch((err) => {
+        console.log(err);
+    })
 })
 
 // use this function for every incoming request
