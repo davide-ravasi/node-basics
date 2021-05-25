@@ -30,6 +30,15 @@ mongoose.connect(dbURI, {useNewUrlParser: true, useUnifiedTopology: true})
 // register view engine
 app.set('view engine', 'ejs');
 
+// add body parser to manipulate
+// form data as an object
+app.use(express.json());
+// encode all the request parameters in the url
+// and parse them as objects
+app.use(express.urlencoded({
+  extended: true
+}));
+
 
 // added morgan logger as middleware
 app.use(morgan(function (tokens, req, res) {
@@ -79,6 +88,25 @@ app.get('/blogs', (req, res) => {
     Blog.find().sort({'createdAt': 1})
         .then(results => {
             res.render('index', {title: 'All your blogs', blogs: results})
+        })
+        .catch(err => {
+            console.log(err);
+        })
+})
+
+app.post('/blogs', (req, res) => {
+    console.log(req.body);
+
+    const blog = new Blog({
+        title: req.body.title,
+        snippet: req.body.snippet,
+        body: req.body.body
+    })
+
+    blog.save()
+        .then(results => {
+            console.log('element saved');
+            res.redirect('/');
         })
         .catch(err => {
             console.log(err);
