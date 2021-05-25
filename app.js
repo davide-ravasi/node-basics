@@ -59,12 +59,7 @@ app.use(express.static('public'));
 // });
 
 app.get('/', (req, res) => {
-    const blogs = [
-        {title: 'Yoshi finds eggs', snippet: 'Lorem ipsum dolor sit amet consectetur'},
-        {title: 'Mario finds stars', snippet: 'Lorem ipsum dolor sit amet consectetur'},
-        {title: 'How to defeat bowser', snippet: 'Lorem ipsum dolor sit amet consectetur'},
-    ];
-    res.render('index', {title: 'Home', blogs: blogs});
+    res.redirect('/blogs');
 });
 
 // app.use((req,res,next) => {
@@ -80,27 +75,57 @@ app.get('/blogs/create', (req, res) => {
     res.render('create', {title: 'Create a new blog'});
 })
 
+app.get('/blogs', (req, res) => {
+    Blog.find().sort({'createdAt': 1})
+        .then(results => {
+            res.render('index', {title: 'All your blogs', blogs: results})
+        })
+        .catch(err => {
+            console.log(err);
+        })
+})
+
 // redirects
 app.get('/about-us', (req, res) => {
     res.redirect('/about', {title: '404'});
 })
 
-app.get('/add-blog', (req, res) => {
-    const blog = new Blog({
-        title: 'new blog',
-        snippet: 'prova snippet',
-        body: 'prova body'
-    });
+// app.get('/add-blog', (req, res) => {
+//     const blog = new Blog({
+//         title: 'new blog 2',
+//         snippet: 'prova snippet 2',
+//         body: 'prova body 2'
+//     });
 
-    blog.save()
-    .then((saveDoc) => {
-        console.log(saveDoc);
-        res.send(saveDoc);
-    })
-    .catch((err) => {
-        console.log(err);
-    })
-})
+//     blog.save()
+//     .then((saveDoc) => {
+//         console.log(saveDoc);
+//         res.send(saveDoc);
+//     })
+//     .catch((err) => {
+//         console.log(err);
+//     })
+// })
+
+// app.get('/all-blogs', (req, res) => {
+//     Blog.find()
+//         .then(results => {
+//             res.send(results);
+//         })
+//         .catch(err => {
+//             console.log(err);
+//         })
+// })
+
+// app.get('/one-blog', (req, res) => {
+//     Blog.findById("60abb38bfc22a1bb919a178d")
+//         .then((results) => {
+//             res.send(results);
+//         })
+//         .catch(err => {
+//             console.log(err);
+//         })
+// })
 
 // use this function for every incoming request
 // regardless of the url
