@@ -35,6 +35,7 @@ app.set('view engine', 'ejs');
 app.use(express.json());
 // encode all the request parameters in the url
 // and parse them as objects
+// and put them in the res.body
 app.use(express.urlencoded({
   extended: true
 }));
@@ -78,11 +79,7 @@ app.get('/', (req, res) => {
 
 app.get('/about', (req, res) => {
     res.render('about', {title: 'About'});
-})
-
-app.get('/blogs/create', (req, res) => {
-    res.render('create', {title: 'Create a new blog'});
-})
+});
 
 app.get('/blogs', (req, res) => {
     Blog.find().sort({'createdAt': 1})
@@ -90,6 +87,20 @@ app.get('/blogs', (req, res) => {
             res.render('index', {title: 'All your blogs', blogs: results})
         })
         .catch(err => {
+            console.log(err);
+        })
+})
+
+app.get('/blogs/create', (req, res) => {
+    res.render('create', {title: 'Create a new blog'});
+})
+
+app.get('/blog/:id', (req, res) => {
+    Blog.findById(req.params.id)
+        .then((result) => {
+            res.render('details', {title: 'Blog details', blog: result});
+        })
+        .catch((err) => {
             console.log(err);
         })
 })
@@ -112,6 +123,16 @@ app.post('/blogs', (req, res) => {
             console.log(err);
         })
 })
+
+app.delete('/blog/:id', (req, res) => {
+    Blog.findByIdAndDelete(req.params.id)
+        .then(() => {
+            res.json({redirect: '/blogs'});
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+});
 
 // redirects
 app.get('/about-us', (req, res) => {
